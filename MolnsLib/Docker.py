@@ -2,7 +2,7 @@ import logging
 import re
 import time
 
-from Utils import Log
+from Utils import Log, ensure_sudo_mode
 import constants
 from molns_provider import ProviderBase
 from constants import Constants
@@ -22,6 +22,7 @@ class Docker:
         def __init__(self, message=None):
             super("Something went wrong while building docker container image.\n{0}".format(message))
 
+    @ensure_sudo_mode
     def __init__(self):
         self.client = Client(base_url=Constants.DOCKER_BASE_URL)
         self.build_count = 0
@@ -30,11 +31,13 @@ class Docker:
     @staticmethod
     def get_container_volume_from_working_dir(working_directory):
         import os
-        return os.path.join("/home/ubuntu/", os.path.basename(working_directory))
+        return \
+            os.path.join("/home/ubuntu/", Constants.DockerWorkingDirectoryPrefix, os.path.basename(working_directory))
 
+    @ensure_sudo_mode
     def create_container(self, image_str, working_directory=None, name=None,
-                         port_bindings={Constants.DEFAULT_PUBLIC_WEBSERVER_PORT: 8080,
-                                        Constants.DEFAULT_PRIVATE_NOTEBOOK_PORT: 8081}):
+                         port_bindings={Constants.DEFAULT_PUBLIC_WEBSERVER_PORT: ('127.0.0.1', 8080),
+                                        Constants.DEFAULT_PRIVATE_NOTEBOOK_PORT: ('127.0.0.1', 8081)}):
         """Creates a new container with elevated privileges. Returns the container ID. Maps port 80 of container
         to 8080 of locahost by default"""
 
@@ -76,6 +79,7 @@ class Docker:
         return container_id
 
     # noinspection PyBroadException
+    @ensure_sudo_mode
     @staticmethod
     def _verify_directory(working_directory):
         import os, Utils
@@ -84,20 +88,23 @@ class Docker:
         try:
             if not os.path.exists(working_directory):
                 os.makedirs(working_directory)
-                os.chown(working_directory, Utils.get_user_id(), Utils.get_group_id())
+                os.chown(working_directory, Utils.get_sudo_user_id(), Utils.get_sudo_group_id())
             return True
         except:
             return False
 
+    @ensure_sudo_mode
     def stop_containers(self, container_ids):
         """Stops given containers."""
         for container_id in container_ids:
             self.stop_container(container_id)
 
+    @ensure_sudo_mode
     def stop_container(self, container_id):
         """Stops the container with given ID."""
         self.client.stop(container_id)
 
+    @ensure_sudo_mode
     def container_status(self, container_id):
         """Checks if container with given ID running."""
         status = ProviderBase.STATUS_TERMINATED
@@ -111,11 +118,13 @@ class Docker:
             pass
         return status
 
+    @ensure_sudo_mode
     def start_containers(self, container_ids):
         """Starts each container in given list of container IDs."""
         for container_id in container_ids:
             self.start_container(container_id)
 
+    @ensure_sudo_mode
     def start_container(self, container_id):
         """ Start the container with given ID."""
         Log.write_log(Docker.LOG_TAG + " Starting container " + container_id)
@@ -126,6 +135,7 @@ class Docker:
             return False
         return True
 
+    @ensure_sudo_mode
     def execute_command(self, container_id, command):
         """Executes given command as a shell command in the given container. Returns None is anything goes wrong."""
         run_command = "/bin/bash -c \"" + command + "\""
@@ -141,6 +151,7 @@ class Docker:
             Log.write_log(Docker.LOG_TAG + " Could not execute command.", e)
             return None
 
+    @ensure_sudo_mode
     def build_image(self, dockerfile):
         """ Build image from given Dockerfile object and return ID of the image created. """
         import uuid
@@ -168,6 +179,7 @@ class Docker:
     def _decorate(some_line):
         return some_line[11:-4].rstrip()
 
+    @ensure_sudo_mode
     def image_exists(self, image_str):
         """Checks if an image with the given ID/tag exists locally."""
         docker_image = DockerImage.from_string(image_str)
@@ -186,6 +198,7 @@ class Docker:
                 return True
         return False
 
+    @ensure_sudo_mode
     def terminate_containers(self, container_ids):
         """ Terminates containers with given container ids."""
         for container_id in container_ids:
@@ -196,23 +209,39 @@ class Docker:
             except NotFound:
                 pass
 
+    @ensure_sudo_mode
     def terminate_container(self, container_id):
         self.client.remove_container(container_id)
 
+    @ensure_sudo_mode
+    def get_mapped_ports(self, container_id):
+        container_ins = self.client.inspect_container(container_id)
+        mapped_ports = container_ins['HostConfig']['PortBindings']
+        ret_val = []
+        if mapped_ports is None:
+            Log.write_log("No mapped ports for {0}".format(container_id))
+            return
+        for k, v in mapped_ports.iteritems():
+            host_port = v[0]['HostPort']
+            ret_val.append(host_port)
+        return ret_val
+
+    @ensure_sudo_mode
     def get_working_directory(self, container_id):
         return self.client.inspect_container(container_id)["Config"]["WorkingDir"]
 
+    @ensure_sudo_mode
     def get_home_directory(self, container_id):
         env_vars = self.client.inspect_container(container_id)["Config"]["Env"]
         home = [i for i in env_vars if i.startswith("HOME")]
         return home[0].split("=")[1]
 
+    @ensure_sudo_mode
     def put_archive(self, container_id, tar_file_bytes, target_path_in_container):
         """ Copies and unpacks a given tarfile in the container at specified location.
         Location must exist in container."""
         if self.start_container(container_id) is False:
-            Log.write_log(Docker.LOG_TAG + "ERROR Could not start container.")
-            return
+           raise Exception("ERROR Could not start container.")
 
         # Prepend file path with /home/ubuntu/. TODO Should be refined.
         if not target_path_in_container.startswith("/home/ubuntu/"):
@@ -223,6 +252,7 @@ class Docker:
         if not self.client.put_archive(container_id, target_path_in_container, tar_file_bytes):
             Log.write_log(Docker.LOG_TAG + "Failed to copy.")
 
+    @ensure_sudo_mode
     def get_container_ip_address(self, container_id):
         """ Returns the IP Address of given container."""
         self.start_container(container_id)

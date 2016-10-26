@@ -1,4 +1,5 @@
 class Constants:
+    DockerWorkingDirectoryPrefix = "working_dir_"
     LOGGING_DIRECTORY = "~/MOLNS_LOG"
     DOCKER_BASE_URL = "unix://var/run/docker.sock"
     DOCKER_DEFAULT_IMAGE = "ubuntu:latest"
@@ -17,4 +18,4 @@ class Constants:
     DEFAULT_PUBLIC_NOTEBOOK_PORT = 443
     DEFAULT_PRIVATE_WEBSERVER_PORT = 8001
     DEFAULT_PUBLIC_WEBSERVER_PORT = 80
-
+    DEFAULT_QSUB_SSH_PORT = 22

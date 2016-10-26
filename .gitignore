@@ -6,7 +6,3 @@ molns_install.log
 *.tar.gz
 *.tar
 notes
-qsubscript
-/dockerfile_*
-\#qsubscript\#
-docker_test.py

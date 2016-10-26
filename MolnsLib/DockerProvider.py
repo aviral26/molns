@@ -9,7 +9,6 @@ import tempfile
 from DockerSSH import DockerSSH
 from collections import OrderedDict
 
-from MolnsLib import ssh_deploy
 from molns_provider import ProviderBase, ProviderException
 
 
@@ -39,9 +38,9 @@ class DockerBase(ProviderBase):
             container_id = self.docker.create_container(self.provider.config["molns_image_name"], name=self.name,
                                                         port_bindings={
                                                             Constants.DEFAULT_PUBLIC_WEBSERVER_PORT:
-                                                                self.config['web_server_port'],
+                                                                ('127.0.0.1', self.config['web_server_port']),
                                                         Constants.DEFAULT_PRIVATE_NOTEBOOK_PORT:
-                                                            self.config['notebook_port']},
+                                                            ('127.0.0.1', self.config['notebook_port'])},
                                                         working_directory=self.config["working_directory"])
             stored_container = self.datastore.get_instance(provider_instance_identifier=container_id,
                                                            ip_address=self.docker.get_container_ip_address(container_id)
@@ -88,7 +87,6 @@ class DockerProvider(DockerBase):
 
     OBJ_NAME = 'DockerProvider'
 
-    # TODO ask user for directory to store stuff at
     CONFIG_VARS = OrderedDict([
         ('ubuntu_image_name',
          {'q': 'Base Ubuntu image to use', 'default': constants.Constants.DOCKER_DEFAULT_IMAGE,
@@ -158,7 +156,7 @@ class DockerProvider(DockerBase):
         """ Create Dockerfile from given commands. """
         import Utils
 
-        user_id = Utils.get_user_id()
+        user_id = Utils.get_sudo_user_id()
         dockerfile = '''FROM ubuntu:14.04\nRUN apt-get update\n\n# Add user ubuntu.\nRUN useradd -u {0} -ms /bin/bash ubuntu\n
          # Set up base environment.\nRUN apt-get install -yy \ \n    software-properties-common \ \n
              python-software-properties \ \n    wget \ \n    curl \ \n   git \ \n    ipython \ \n    sudo \ \n

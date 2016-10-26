@@ -249,7 +249,7 @@ class SSHDeploy:
         logging.debug('deploy_molns_webserver(): controller_obj.provider.type={0}\n',controller_obj.provider.type)
 
         if controller_obj.provider.type == Constants.DockerProvider:
-            ip_address = "0.0.0.0:{0}".format(controller_obj.config["web_server_port"])
+            ip_address = "127.0.0.1:{0}".format(controller_obj.config["web_server_port"])
         logging.debug('deploy_molns_webserver(): ip_address={0}\n',ip_address)
 
         try:
