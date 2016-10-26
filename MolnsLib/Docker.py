@@ -58,7 +58,7 @@ class Docker:
         import os
         if Docker._verify_directory(working_directory) is False:
             if working_directory is not None:
-                raise InvalidVolumeName("MOLNs uses certain reserved names for its configuration files in the controller environment, and unfortunately the provided name for working directory of the controller cannot be one of these. Please configure this controller again with a different volume name and retry. Here is a list of forbidden names: \n{0}".format(Constants.ForbiddenVolumenames))
+                raise InvalidVolumeName("\n\nMOLNs uses certain reserved names for its configuration files in the controller environment, and unfortunately the provided name for working directory of the controller cannot be one of these. Please configure this controller again with a different volume name and retry. Here is a list of forbidden names: \n{0}".format(Constants.ForbiddenVolumeNames))
 
             Log.write_log(Docker.LOG_TAG + "Unable to verify provided directory to use to as volume. Volume will NOT "
                                            "be created.")
