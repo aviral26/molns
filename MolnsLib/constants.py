@@ -19,3 +19,4 @@ class Constants:
     DEFAULT_PRIVATE_WEBSERVER_PORT = 8001
     DEFAULT_PUBLIC_WEBSERVER_PORT = 80
     DEFAULT_QSUB_SSH_PORT = 22
+    ForbiddenVolumeNames = [".ssh", ".ipython", ".molns", "ipython", "localarea", "shared"]

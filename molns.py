@@ -1545,7 +1545,7 @@ def parse_args():
     if len(sys.argv) < 2 or sys.argv[1] == '-h':
         print_help()
         return
-    Log.verbose = True
+    Log.verbose = False
     arg_list = sys.argv[1:]
     config_dir = './.molns/'
 

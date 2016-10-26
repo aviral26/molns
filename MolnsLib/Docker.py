@@ -10,6 +10,10 @@ from docker import Client
 from docker.errors import NotFound, NullResource, APIError
 
 
+class InvalidVolumeName(Exception):
+    pass
+
+
 class Docker:
 
     """ A wrapper over docker-py and some utility methods and classes. """
@@ -31,8 +35,7 @@ class Docker:
     @staticmethod
     def get_container_volume_from_working_dir(working_directory):
         import os
-        return \
-            os.path.join("/home/ubuntu/", Constants.DockerWorkingDirectoryPrefix, os.path.basename(working_directory))
+        return os.path.join("/home/ubuntu/", os.path.basename(working_directory))
 
     @ensure_sudo_mode
     def create_container(self, image_str, working_directory=None, name=None,
@@ -54,6 +57,9 @@ class Docker:
         Log.write_log("Using image {0}".format(image))
         import os
         if Docker._verify_directory(working_directory) is False:
+            if working_directory is not None:
+                raise InvalidVolumeName("MOLNs uses certain reserved names for its configuration files in the controller environment, and unfortunately the provided name for working directory of the controller cannot be one of these. Please configure this controller again with a different volume name and retry. Here is a list of forbidden names: \n{0}".format(Constants.ForbiddenVolumenames))
+
             Log.write_log(Docker.LOG_TAG + "Unable to verify provided directory to use to as volume. Volume will NOT "
                                            "be created.")
             hc = self.client.create_host_config(privileged=True, port_bindings=port_bindings)
@@ -83,7 +89,7 @@ class Docker:
     @staticmethod
     def _verify_directory(working_directory):
         import os, Utils
-        if working_directory is None:
+        if working_directory is None or os.path.basename(working_directory) in Constants.ForbiddenVolumeNames:
             return False
         try:
             if not os.path.exists(working_directory):
