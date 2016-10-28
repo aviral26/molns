@@ -11,7 +11,6 @@ import urllib2
 
 from constants import Constants
 
-from Docker import Docker
 from ssh import SSH
 from DockerSSH import DockerSSH
 
@@ -21,9 +20,8 @@ class SSHDeployException(Exception):
 
 
 class SSHDeploy:
-    '''
-    This class is used for deploy IPython
-    '''
+    """This class is used for executing commands remotely via ssh."""
+
     DEFAULT_STOCHSS_PORT = 1443
     DEFAULT_INTERNAL_STOCHSS_PORT = 8080
     DEFAULT_GAE_ADMIN_PORT = 8000
@@ -31,7 +29,6 @@ class SSHDeploy:
     MAX_NUMBER_SSH_CONNECT_ATTEMPTS = 25
     DEFAULT_SSH_PORT = 22
     DEFAULT_IPCONTROLLER_PORT = 9000
-
     DEFAULT_PYURDME_TEMPDIR = "/mnt/pyurdme_tmp"
 
     def __init__(self, ssh, config=None, config_dir=None):

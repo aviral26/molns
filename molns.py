@@ -1,17 +1,15 @@
 #!/usr/bin/env python
+import json
+import logging
+import multiprocessing
 import os
+import subprocess
 import sys
 
 from MolnsLib.Utils import Log
-from MolnsLib.molns_datastore import Datastore, DatastoreException, VALID_PROVIDER_TYPES, get_provider_handle
 from MolnsLib.molns_provider import ProviderException
-import subprocess
-from MolnsLib.ssh_deploy import SSHDeploy
-import multiprocessing
-import json
-import logging
-
-from MolnsLib import constants
+from aviral26.molns.MolnsLib.molns_datastore import Datastore, DatastoreException, VALID_PROVIDER_TYPES, get_provider_handle
+from aviral26.molns.MolnsLib.ssh_deploy import SSHDeploy
 
 logger = logging.getLogger()
 # logger.setLevel(logging.INFO)  #for Debugging
@@ -1542,13 +1540,13 @@ def print_help():
 
 
 def parse_args():
+    from MolnsLib.constants import Constants
     if len(sys.argv) < 2 or sys.argv[1] == '-h':
         print_help()
         return
     Log.verbose = False
     arg_list = sys.argv[1:]
-    config_dir = './.molns/'
-
+    config_dir = Constants.ConfigDir
     while len(arg_list) > 0 and arg_list[0].startswith('--'):
 
         if arg_list[0].startswith('--config='):

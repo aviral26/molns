@@ -1,14 +1,13 @@
+import logging
+import os
+import time
+from collections import OrderedDict
+
 import boto
 import boto.ec2
 from boto.exception import EC2ResponseError
-import collections
-import os
-import time
-import sys
-import logging
-from collections import OrderedDict
+
 import installSoftware
-import ssh_deploy
 from molns_provider import ProviderBase, ProviderException
 
 #logging.getLogger('boto').setLevel(logging.ERROR)

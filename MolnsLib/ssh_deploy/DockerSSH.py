@@ -5,7 +5,7 @@ import re
 
 
 # "unused" arguments to some methods are added to maintain compatibility with existing upper level APIs.
-from MolnsLib.Utils import Log
+from Utils import Log
 
 
 class DockerSSH(object):
@@ -27,11 +27,18 @@ class DockerSSH(object):
     def connect(self, instance, endpoint, username=None, key_filename=None):
         self.container_id = instance.provider_instance_identifier
 
+    def connect_cluster_node(self, ip_address, port, username, keyfile):
+        raise DockerSSHException("This invocation has been in error.")
+
     def close(self):
         self.container_id = None
 
 
 class MockSFTPFileException(Exception):
+    pass
+
+
+class DockerSSHException(Exception):
     pass
 
 

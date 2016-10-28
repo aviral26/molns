@@ -1,3 +1,6 @@
+import os
+
+
 class Constants:
     DockerWorkingDirectoryPrefix = "working_dir_"
     LOGGING_DIRECTORY = "~/MOLNS_LOG"
@@ -14,9 +17,12 @@ class Constants:
     DockerNonExistentTag = "**NA**"
     DockerImageDelimiter = "|||"
     MolnsDockerContainerNamePrefix = "Molns-"
+    MolnsExecHelper = "molns_exec_helper.py"
     DEFAULT_PRIVATE_NOTEBOOK_PORT = 8081
     DEFAULT_PUBLIC_NOTEBOOK_PORT = 443
     DEFAULT_PRIVATE_WEBSERVER_PORT = 8001
     DEFAULT_PUBLIC_WEBSERVER_PORT = 80
     DEFAULT_QSUB_SSH_PORT = 22
     ForbiddenVolumeNames = [".ssh", ".ipython", ".molns", "ipython", "localarea", "shared"]
+    ConfigDir = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".molns/")
+

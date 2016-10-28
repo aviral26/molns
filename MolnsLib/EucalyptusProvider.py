@@ -1,16 +1,15 @@
-import boto
-import boto.ec2
-from boto.exception import EC2ResponseError
-from boto.ec2.regioninfo import RegionInfo
-import collections
+import logging
 import os
 import time
-import sys
-import logging
-from urlparse import urlparse
 from collections import OrderedDict
+from urlparse import urlparse
+
+import boto
+import boto.ec2
+from boto.ec2.regioninfo import RegionInfo
+from boto.exception import EC2ResponseError
+
 import installSoftware
-import ssh_deploy
 from molns_provider import ProviderBase, ProviderException
 
 #logging.getLogger('boto').setLevel(logging.ERROR)

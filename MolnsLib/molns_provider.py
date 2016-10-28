@@ -1,6 +1,7 @@
-import os
 import collections
-from ssh import SSH
+import os
+
+from aviral26.molns.MolnsLib.ssh_deploy.ssh import SSH
 
 
 class ProviderException(Exception):

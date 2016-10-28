@@ -64,5 +64,8 @@ class SSH:
     def connect(self, instance, port, username=None, key_filename=None):
         return self.ssh.connect(instance.ip_address, port, username, key_filename=key_filename)
 
+    def connect_cluster_node(self, ip_address, port, username, key_filename):
+        return self.ssh.connect(ip_address, port, username, key_filename=key_filename)
+
     def close(self):
         self.ssh.close()
