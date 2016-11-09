@@ -25,4 +25,3 @@ class Constants:
     DEFAULT_QSUB_SSH_PORT = 22
     ForbiddenVolumeNames = [".ssh", ".ipython", ".molns", "ipython", "localarea", "shared"]
     ConfigDir = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".molns/")
-

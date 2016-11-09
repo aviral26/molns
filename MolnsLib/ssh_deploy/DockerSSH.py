@@ -5,8 +5,6 @@ import re
 
 
 # "unused" arguments to some methods are added to maintain compatibility with existing upper level APIs.
-from Utils import Log
-
 
 class DockerSSH(object):
     def __init__(self, docker):
@@ -62,8 +60,8 @@ class MockSFTPFile:
         self.container_id = container_id
         if flag is 'w':
             self.flag = flag
-        else:
-            Log.write_log("WARNING Unrecognized file mode. Filename: {0}, Flag: {1}".format(filename, flag))
+        #  else:
+            #  print("WARNING Unrecognized file mode. Filename: {0}, Flag: {1}".format(filename, flag))
 
     def write(self, write_this):
         self.file_contents += write_this
@@ -90,6 +88,6 @@ class MockSFTPFile:
         with open(temp_tar, mode='rb') as f:
             tar_file_bytes = f.read()
 
-        Log.write_log("path to file: {0}".format(path_to_file))
+        #  print("path to file: {0}".format(path_to_file))
         self.docker.put_archive(self.container_id, tar_file_bytes, path_to_file)
         os.remove(temp_tar)  # Remove temporary tar file.

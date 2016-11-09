@@ -7,7 +7,7 @@ from collections import OrderedDict
 import Docker
 import constants
 import installSoftware
-from aviral26.molns.MolnsLib.ssh_deploy.DockerSSH import DockerSSH
+from ssh_deploy.DockerSSH import DockerSSH
 from constants import Constants
 from molns_provider import ProviderBase, ProviderException
 

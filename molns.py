@@ -8,8 +8,8 @@ import sys
 
 from MolnsLib.Utils import Log
 from MolnsLib.molns_provider import ProviderException
-from aviral26.molns.MolnsLib.molns_datastore import Datastore, DatastoreException, VALID_PROVIDER_TYPES, get_provider_handle
-from aviral26.molns.MolnsLib.ssh_deploy import SSHDeploy
+from MolnsLib.molns_datastore import Datastore, DatastoreException, VALID_PROVIDER_TYPES, get_provider_handle
+from MolnsLib.ssh_deploy import SSHDeploy
 
 logger = logging.getLogger()
 # logger.setLevel(logging.INFO)  #for Debugging
